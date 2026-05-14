@@ -16,6 +16,12 @@ This plugin adds a **Stuff To Do** view where users can order their own assigned
 - Automatically removes closed, deleted, or reassigned issues from queues
 - Application and project menu entries before Redmine's Issues tab
 
+## Access
+
+Users can see their own queue when they have queued items or open assigned issues.
+
+Redmine administrators can manage any user's queue. Users with a project role named `Administrator` are also treated as queue managers.
+
 ## Compatibility
 
 - Redmine 6.0 or newer

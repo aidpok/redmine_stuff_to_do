@@ -1,7 +1,8 @@
 class StuffToDoController < ApplicationController
   before_action :require_login
   before_action :find_target_user
-  before_action :require_stuff_to_do_access
+  before_action :require_stuff_to_do_access, only: [:index]
+  before_action :require_stuff_to_do_manage, only: [:add, :add_filtered, :remove, :reorder]
 
   helper :stuff_to_do
   helper :issues
@@ -56,6 +57,10 @@ class StuffToDoController < ApplicationController
 
   def require_stuff_to_do_access
     render_403 unless RedmineStuffToDo::Access.can_view?(User.current, @user)
+  end
+
+  def require_stuff_to_do_manage
+    render_403 unless RedmineStuffToDo::Access.can_manage?(User.current, @user)
   end
 
   def load_board

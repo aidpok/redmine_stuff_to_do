@@ -8,10 +8,6 @@ module RedmineStuffToDo
       user.present? && user.logged? && (manager?(user) || queued_user?(user) || assigned_issue_user?(user))
     end
 
-    def staff?(user)
-      manager?(user) || queued_user?(user)
-    end
-
     def manager?(user)
       user.present? && user.logged? && (user.admin? || (role_names(user) & MANAGER_ROLE_NAMES).any?)
     end

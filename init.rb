@@ -20,5 +20,5 @@ Redmine::Plugin.register :redmine_stuff_to_do do
   menu :project_menu, :stuff_to_do, {
     controller: 'stuff_to_do',
     action: 'index'
-  }, caption: 'Stuff To Do', before: :issues, param: :project_id, if: Proc.new { RedmineStuffToDo::Access.visible_to?(User.current) }
+  }, caption: 'Stuff To Do', before: :issues, param: :project_id, permission: false, if: Proc.new { RedmineStuffToDo::Access.visible_to?(User.current) }
 end
