@@ -81,11 +81,12 @@
     <ol class="stuff-to-do-list available-list">
       <% if @available.any? %>
         <% @available.each do |issue| %>
-          <li class="stuff-to-do-item" draggable="true" data-queue-value="issue:<%= issue.id %>">
+          <li class="stuff-to-do-item <%= issue.css_classes %>" draggable="true" data-queue-value="issue:<%= issue.id %>">
             <span class="drag-handle">↕</span>
             <div class="stuff-to-do-main">
               <%= stuff_to_do_issue_row(issue) %>
               <span class="stuff-to-do-meta"><%= stuff_to_do_issue_meta(issue) %></span>
+              <%= stuff_to_do_issue_progress(issue) %>
             </div>
             <div class="stuff-to-do-actions">
               <%= button_to 'Add', stuff_to_do_add_path(user_id: @user.id, issue_id: issue.id), method: :post, params: filter_params, class: 'small' %>
@@ -96,6 +97,7 @@
         <li class="stuff-to-do-empty">No available assigned issues.</li>
       <% end %>
     </ol>
+    <%= stuff_to_do_pane_summary(@available) %>
 
     <% if @available_total_pages > 1 %>
       <p class="pagination">

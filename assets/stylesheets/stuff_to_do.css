@@ -14,18 +14,32 @@
 .stuff-to-do-filter-form select { max-width: 100%; }
 .stuff-to-do-bulk-form { margin: 0 0 8px; }
 .stuff-to-do-bulk-form input[type="submit"] { font-weight: bold; }
-.stuff-to-do-list { margin: 0; padding-left: 0; list-style: none; }
-.stuff-to-do-item { display: flex; align-items: flex-start; gap: 8px; border: 1px solid #d7d7d7; background: #fff; margin-bottom: 6px; padding: 7px; }
+.stuff-to-do-list { display: grid; gap: 6px; grid-template-columns: 1fr; margin: 0; padding-left: 0; list-style: none; }
+.stuff-to-do-item { display: flex; align-items: flex-start; gap: 8px; border: 1px solid #d7d7d7; background: #fff; margin-bottom: 0; padding: 8px; }
 .stuff-to-do-item.dragging { opacity: 0.45; }
 .sortable-stuff-to-do .stuff-to-do-item[data-queue-value^="issue:"] { background: #fffbe8; }
 .sortable-stuff-to-do .stuff-to-do-item[data-queue-value^="issue:"] .stuff-to-do-actions { display: none; }
+.stuff-to-do-item[class*=" priority-high"] { color: #900; background: #fee; border-color: #fcc; }
+.stuff-to-do-item[class*=" priority-high"] a { color: #900; }
+.stuff-to-do-item.priority-highest { font-weight: bold; background: #ffd4d4; border-color: #ffb4b4; }
+.stuff-to-do-item[class*=" priority-low"] { color: #559; background: #f2faff; border-color: #add7f3; }
+.stuff-to-do-item[class*=" priority-low"] a { color: #559; }
 .drag-handle { color: #777; cursor: move; line-height: 1.4; }
 .stuff-to-do-position { color: #777; font-weight: bold; min-width: 18px; text-align: right; }
-.stuff-to-do-main { min-width: 0; flex: 1; }
+.stuff-to-do-main { align-self: stretch; display: flex; flex: 1; flex-direction: column; min-width: 0; }
 .stuff-to-do-subject { display: block; margin-top: 2px; }
 .stuff-to-do-meta { display: block; color: #777; font-size: 90%; margin-top: 3px; }
+.stuff-to-do-progress { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; color: #666; font-size: 95%; margin-top: auto; }
+.stuff-to-do-progress table.progress { border: 1px solid #bfbfbf; border-collapse: separate; display: inline-table; float: none; margin: 0; vertical-align: middle; width: 150px !important; }
+.stuff-to-do-progress table.progress td { height: 1.25em; }
+.stuff-to-do-pane-summary { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; color: #666; font-size: 95%; margin-top: 8px; }
+.stuff-to-do-progress-key { display: inline-block; flex: 0 0 12px; width: 12px; height: 12px; border: 1px solid #bfbfbf; background: #eee; box-sizing: border-box; }
 .stuff-to-do-actions { display: flex; flex-direction: column; gap: 4px; }
 .stuff-to-do-actions form { margin: 0; }
 .stuff-to-do-empty { color: #777; border: 1px dashed #ccc; padding: 8px; background: #fafafa; }
 .pagination { display: flex; gap: 10px; align-items: center; margin-top: 8px; }
+@media (min-width: 1500px) {
+  .stuff-to-do-list { grid-template-columns: repeat(2, minmax(360px, 1fr)); }
+  .stuff-to-do-empty { grid-column: 1 / -1; }
+}
 @media (max-width: 1100px) { .stuff-to-do-board { grid-template-columns: 1fr; } }
