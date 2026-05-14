@@ -1,0 +1,6 @@
+get 'projects/:project_id/stuff_to_do', to: 'stuff_to_do#index', as: 'project_stuff_to_do'
+get 'stuff_to_do', to: 'stuff_to_do#index', as: 'stuff_to_do'
+post 'stuff_to_do/add', to: 'stuff_to_do#add', as: 'stuff_to_do_add'
+post 'stuff_to_do/add_filtered', to: 'stuff_to_do#add_filtered', as: 'stuff_to_do_add_filtered'
+post 'stuff_to_do/remove', to: 'stuff_to_do#remove', as: 'stuff_to_do_remove'
+post 'stuff_to_do/reorder', to: 'stuff_to_do#reorder', as: 'stuff_to_do_reorder'

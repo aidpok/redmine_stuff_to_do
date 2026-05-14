@@ -1,0 +1,21 @@
+<ol id="<%= list_id %>" class="stuff-to-do-list sortable-stuff-to-do">
+  <% if items.any? %>
+    <% items.each_with_index do |item, index| %>
+      <% issue = item.stuff %>
+      <% next unless issue.present? %>
+      <li class="stuff-to-do-item" draggable="true" data-queue-value="item:<%= item.id %>">
+        <span class="drag-handle">↕</span>
+        <span class="stuff-to-do-position"><%= index + 1 %></span>
+        <div class="stuff-to-do-main">
+          <%= stuff_to_do_issue_row(issue) %>
+          <span class="stuff-to-do-meta"><%= stuff_to_do_issue_meta(issue) %></span>
+        </div>
+        <div class="stuff-to-do-actions">
+          <%= button_to 'Remove', stuff_to_do_remove_path(user_id: @user.id, id: item.id), method: :post, params: filter_params, class: 'small' %>
+        </div>
+      </li>
+    <% end %>
+  <% else %>
+    <li class="stuff-to-do-empty">Drag issues here to build the list.</li>
+  <% end %>
+</ol>

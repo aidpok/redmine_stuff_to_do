@@ -1,0 +1,112 @@
+<% html_title('Stuff To Do') %>
+<% content_for :header_tags do %>
+  <%= stylesheet_link_tag 'stuff_to_do', plugin: 'redmine_stuff_to_do', media: 'all' %>
+  <%= javascript_include_tag 'stuff_to_do', plugin: 'redmine_stuff_to_do' %>
+<% end %>
+
+<div class="contextual">
+  <% if RedmineStuffToDo::Access.manager?(User.current) && @users.many? %>
+    <%= form_tag(stuff_to_do_path, method: :get, class: 'stuff-to-do-user-form') do %>
+      <label for="user_id">View user</label>
+      <%= select_tag 'user_id', options_for_select(@managed_user_options, @user.id), onchange: 'this.form.submit();' %>
+    <% end %>
+  <% end %>
+</div>
+
+<h2>Stuff To Do</h2>
+<p class="subtitle"><%= @user.name %></p>
+
+<div class="stuff-to-do-summary">
+  <span><strong><%= @queued_items.size %></strong> queued</span>
+  <span><strong><%= @doing_now.size %></strong> doing now</span>
+  <span><strong><%= @recommended.size %></strong> recommended</span>
+  <span><strong><%= @available_total_count %></strong> available</span>
+</div>
+
+<div class="stuff-to-do-toolbar">
+  <% if @queued_items.any? || @available.any? %>
+    <%= form_tag(stuff_to_do_reorder_path(user_id: @user.id), method: :post, class: 'stuff-to-do-reorder-form') do %>
+      <% filter_params.each do |key, value| %>
+        <%= hidden_field_tag key, value, id: nil %>
+      <% end %>
+      <div class="stuff-to-do-order-fields">
+        <% @queued_items.each do |item| %>
+          <%= hidden_field_tag 'queue_items[]', "item:#{item.id}", id: nil %>
+        <% end %>
+      </div>
+      <%= submit_tag 'Save order', class: 'small', id: 'stuff-to-do-save-order', disabled: true %>
+      <span class="stuff-to-do-save-state" id="stuff-to-do-save-state">No changes</span>
+    <% end %>
+  <% end %>
+</div>
+
+<div class="stuff-to-do-board">
+  <div class="stuff-to-do-left-panes">
+    <section class="stuff-to-do-pane">
+      <h3>What I'm Doing Now <span class="stuff-to-do-count">(first 5)</span></h3>
+      <%= render partial: 'queue', locals: {items: @doing_now, list_id: 'doing-now'} %>
+    </section>
+
+    <section class="stuff-to-do-pane">
+      <h3>What's Recommended To Do Next</h3>
+      <%= render partial: 'queue', locals: {items: @recommended, list_id: 'recommended'} %>
+    </section>
+
+  </div>
+
+  <section class="stuff-to-do-pane">
+    <h3>What's Available <span class="stuff-to-do-count">(<%= @available_filtered_count %><%= " of #{@available_total_count}" if @available_query.present? %>)</span></h3>
+
+    <%= form_tag(stuff_to_do_path, method: :get, class: 'stuff-to-do-filter-form') do %>
+      <%= hidden_field_tag 'user_id', @user.id, id: nil %>
+      <%= search_field_tag 'q', @available_query, placeholder: 'Filter issue id or subject' %>
+      <%= select_tag 'project_id', options_from_collection_for_select(@available_filter_options[:projects], :id, :name, @available_filters[:project_id]), prompt: 'Any project' %>
+      <%= select_tag 'status_id', options_from_collection_for_select(@available_filter_options[:statuses], :id, :name, @available_filters[:status_id]), prompt: 'Any status' %>
+      <%= select_tag 'priority_id', options_from_collection_for_select(@available_filter_options[:priorities], :id, :name, @available_filters[:priority_id]), prompt: 'Any priority' %>
+      <%= submit_tag 'Filter', class: 'small' %>
+      <% if @available_filters.any? %>
+        <%= link_to 'Clear', stuff_to_do_path(user_id: @user.id), class: 'icon icon-reload' %>
+      <% end %>
+    <% end %>
+
+    <% if @available.any? %>
+      <%= form_tag(stuff_to_do_add_filtered_path(user_id: @user.id), method: :post, class: 'stuff-to-do-bulk-form') do %>
+        <% filter_params.each do |key, value| %>
+          <%= hidden_field_tag key, value, id: nil %>
+        <% end %>
+        <%= submit_tag 'Add first 5 matching', class: 'small' %>
+      <% end %>
+    <% end %>
+
+    <ol class="stuff-to-do-list available-list">
+      <% if @available.any? %>
+        <% @available.each do |issue| %>
+          <li class="stuff-to-do-item" draggable="true" data-queue-value="issue:<%= issue.id %>">
+            <span class="drag-handle">↕</span>
+            <div class="stuff-to-do-main">
+              <%= stuff_to_do_issue_row(issue) %>
+              <span class="stuff-to-do-meta"><%= stuff_to_do_issue_meta(issue) %></span>
+            </div>
+            <div class="stuff-to-do-actions">
+              <%= button_to 'Add', stuff_to_do_add_path(user_id: @user.id, issue_id: issue.id), method: :post, params: filter_params, class: 'small' %>
+            </div>
+          </li>
+        <% end %>
+      <% else %>
+        <li class="stuff-to-do-empty">No available assigned issues.</li>
+      <% end %>
+    </ol>
+
+    <% if @available_total_pages > 1 %>
+      <p class="pagination">
+        <% if @available_page > 1 %>
+          <%= link_to '« Previous', stuff_to_do_path(filter_params.merge(user_id: @user.id, page: @available_page - 1)) %>
+        <% end %>
+        <span>Page <%= @available_page %> of <%= @available_total_pages %></span>
+        <% if @available_page < @available_total_pages %>
+          <%= link_to 'Next »', stuff_to_do_path(filter_params.merge(user_id: @user.id, page: @available_page + 1)) %>
+        <% end %>
+      </p>
+    <% end %>
+  </section>
+</div>
